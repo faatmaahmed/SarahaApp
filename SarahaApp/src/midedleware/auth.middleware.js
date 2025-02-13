@@ -17,7 +17,7 @@ export const authentication=()=>{
     return asyncHandler(async(req,res,next)=>{
     const {authorization}=req.headers
     const [Bearer,token]=authorization?.split(" ") || []
-    console.log(authorization.split(" ") || []);
+    
     
     if(!Bearer || !token){
     return next(new Error("in valid token component",{cause:400}))
@@ -35,9 +35,6 @@ export const authentication=()=>{
         default:
     break;
      }
-     console.log(signature);
-     
-     
      
      const decoded =verifyToken({token,signature})
      if(!decoded?._id){
@@ -47,9 +44,9 @@ export const authentication=()=>{
      if(!user){
      return next(new Error("user not found",{cause:404}))
      } 
-    //  if (user.changeCredintialTime?.getTime() >= decoded.iat * 1000){  
-    //  return next(new Error("in valid credintials",{cause:400}))
-    //  } 
+     if (user.changeCredintialTime?.getTime() >= decoded.iat * 1000){  
+     return next(new Error("in valid credintials",{cause:400}))
+     } 
      req.user=user
      return next()
      })  
